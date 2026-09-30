@@ -10,6 +10,9 @@ import { COLLEGE_BY_ID, COLLEGES } from '../data/colleges.js'
 import { useQuiz } from '../hooks/useQuiz.jsx'
 
 /**
+ * The hero fills exactly one screen below the fixed-height header (svh = the
+ * visible height with mobile browser toolbars showing), content centered.
+ *
  * Sticker layout around the hero on wide screens (xl+). Positions are % of the
  * hero box; below xl the same stickers collapse into a cluster under the CTA.
  */
@@ -40,7 +43,7 @@ function Hero() {
   const hasResult = complete && finished
 
   return (
-    <section className="relative mx-auto flex w-full max-w-7xl flex-col px-4 pb-10 pt-3 sm:px-8 sm:pb-14 sm:pt-8 xl:min-h-[max(600px,calc(100svh-6rem))] xl:justify-center xl:pb-12 xl:pt-2">
+    <section className="relative mx-auto flex min-h-[calc(100svh-4rem)] w-full max-w-7xl flex-col justify-center px-4 py-4 sm:min-h-[calc(100svh-5rem)] sm:px-8 sm:py-8 xl:min-h-[max(600px,calc(100svh-5rem))] xl:py-6 [@media(max-height:760px)]:py-2">
       {/* Floating stickers — wide screens */}
       <div className="pointer-events-none absolute inset-0 hidden xl:block">
         {STICKERS.map((s, i) => (
@@ -92,11 +95,11 @@ function Hero() {
           </span>
         </motion.p>
 
-        <motion.p {...rise(0.34)} className="mt-6 max-w-md text-balance text-[1.02rem] leading-relaxed text-ink-2 sm:mt-8 sm:text-lg">
+        <motion.p {...rise(0.34)} className="mt-6 max-w-md text-balance text-[1.02rem] leading-relaxed text-ink-2 sm:mt-8 sm:text-lg [@media(max-height:720px)]:mt-4">
           12 residential colleges. 20 questionable questions. One college you <em className="font-serif text-[1.15em] italic text-ink">actually</em> belong in.
         </motion.p>
 
-        <motion.div {...rise(0.44)} className="mt-6 flex flex-col items-center gap-3 sm:mt-8 sm:gap-4">
+        <motion.div {...rise(0.44)} className="mt-6 flex flex-col items-center gap-3 sm:mt-8 sm:gap-4 [@media(max-height:720px)]:mt-5 [@media(max-height:720px)]:gap-2.5">
           <Button href="#/start" size="lg" arrow>
             Get re-sorted
           </Button>
@@ -118,7 +121,7 @@ function Hero() {
       </div>
 
       {/* Sticker cluster — below xl */}
-      <div className="relative z-10 mx-auto mt-7 flex max-w-2xl flex-wrap items-center justify-center gap-x-2 gap-y-2 sm:mt-12 sm:gap-x-2.5 sm:gap-y-3 xl:hidden" aria-label="The twelve residential colleges" role="list">
+      <div className="relative z-10 mx-auto mt-7 flex max-w-2xl flex-wrap items-center justify-center gap-x-2 gap-y-2 sm:mt-12 sm:gap-x-2.5 sm:gap-y-3 lg:max-w-5xl xl:hidden [@media(max-height:720px)]:mt-5 [@media(max-height:720px)]:gap-y-1.5 [@media(max-height:600px)]:hidden" aria-label="The twelve residential colleges" role="list">
         {STICKERS.map((s, i) => (
           <motion.div
             key={s.id}

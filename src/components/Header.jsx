@@ -11,7 +11,7 @@ const LINKS = [
 export default function Header({ minimal = false, right = null, tone = 'ink' }) {
   const color = tone === 'accent' ? 'text-[var(--on-accent)]' : 'text-ink'
   return (
-    <header className={`relative z-20 mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-8 sm:py-6 ${color}`}>
+    <header className={`relative z-20 mx-auto flex w-full max-w-7xl h-16 items-center justify-between gap-4 px-4 sm:h-20 sm:px-8 ${color}`}>
       <a href="#/" className="wordmark shrink-0 text-[1.35rem] sm:text-[1.6rem]" aria-label="Rice Resort — home">
         RICE <span className="italic">RESORT</span>
       </a>
