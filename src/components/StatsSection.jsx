@@ -66,14 +66,15 @@ export default function StatsSection() {
         ))}
       </dl>
       <div className="mt-10 overflow-x-auto">
-        <table className="text-[0.65rem]">
+        <table className="table-fixed border-collapse text-[0.65rem]">
           <caption className="eyebrow mb-3 text-left text-muted">Actual college (rows) → personality match (columns)</caption>
           <thead>
             <tr>
-              <th />
+              <th className="w-20" />
               {COLLEGES.map((c) => (
-                <th key={c.id} scope="col" className="h-20 w-8 align-bottom font-mono font-medium">
-                  <span className="inline-block origin-bottom-left -rotate-45 whitespace-nowrap">{c.shortName}</span>
+                <th key={c.id} scope="col" className="relative h-20 w-8 min-w-8 max-w-8 p-0 font-mono font-medium">
+                  {/* Slanted label is absolutely positioned so it can't widen the column. */}
+                  <span className="absolute bottom-1.5 left-3 origin-bottom-left -rotate-45 whitespace-nowrap">{c.shortName}</span>
                 </th>
               ))}
             </tr>
@@ -81,14 +82,14 @@ export default function StatsSection() {
           <tbody>
             {COLLEGES.map((row) => (
               <tr key={row.id}>
-                <th scope="row" className="pr-2 text-right font-mono font-medium">{row.shortName}</th>
+                <th scope="row" className="whitespace-nowrap pr-2 text-right font-mono font-medium">{row.shortName}</th>
                 {COLLEGES.map((col) => {
                   const n = cells.get(`${row.id}>${col.id}`) ?? 0
                   const share = rowTotals[row.id] ? n / rowTotals[row.id] : 0
                   return (
                     <td
                       key={col.id}
-                      className="size-8 border border-cream"
+                      className="size-8 min-w-8 border-2 border-cream p-0"
                       style={{ background: `rgb(29 79 174 / ${Math.min(1, share * 2.5)})` }}
                       title={`${row.name} → ${col.name}: ${n}`}
                     />
