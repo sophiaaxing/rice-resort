@@ -21,7 +21,7 @@ const STICKERS = [
   { id: 'martel', variant: 'pill', pos: { left: '3%', top: '81%' }, rotate: 3 },
   { id: 'sidrich', variant: 'tag', pos: { left: '15%', top: '90%' }, rotate: -6 },
   { id: 'hanszen', variant: 'label', pos: { right: '4%', top: '8%' }, rotate: 6 },
-  { id: 'chao', variant: 'stamp', pos: { right: '11%', top: '24%' }, rotate: -10 },
+  { id: 'chao', variant: 'stamp', pos: { right: '5%', top: '25%' }, rotate: -10 },
   { id: 'duncan', variant: 'pill', pos: { right: '2%', top: '45%' }, rotate: 7 },
   { id: 'mcmurtry', variant: 'tag', pos: { right: '8%', top: '62%' }, rotate: -5 },
   { id: 'willrice', variant: 'label', pos: { right: '2%', top: '79%' }, rotate: -3 },
@@ -40,7 +40,7 @@ function Hero() {
   const hasResult = complete && finished
 
   return (
-    <section className="relative mx-auto w-full max-w-7xl px-4 pb-14 pt-6 sm:px-8 sm:pt-12 xl:min-h-[780px] xl:pb-28">
+    <section className="relative mx-auto flex w-full max-w-7xl flex-col px-4 pb-10 pt-3 sm:px-8 sm:pb-14 sm:pt-8 xl:min-h-[max(600px,calc(100svh-6rem))] xl:justify-center xl:pb-12 xl:pt-2">
       {/* Floating stickers — wide screens */}
       <div className="pointer-events-none absolute inset-0 hidden xl:block">
         {STICKERS.map((s, i) => (
@@ -63,28 +63,28 @@ function Hero() {
       <Drift className="absolute left-[24%] top-[4%] hidden text-rice xl:block" duration={9}>
         <Sparkle className="size-6" />
       </Drift>
-      <Drift className="absolute right-[26%] top-[12%] hidden text-ink/70 lg:block" duration={8} delay={1}>
+      <Drift className="absolute right-[24%] top-[4%] hidden text-ink/70 lg:block" duration={8} delay={1}>
         <Star className="size-7" />
       </Drift>
       <div className="absolute bottom-[14%] right-[27%] hidden text-ink/60 xl:block">
         <Wheel className="size-12" />
       </div>
-      <Drift className="absolute right-4 top-2 text-ink/60 sm:right-10 xl:hidden" duration={8}>
+      <Drift className="absolute right-10 top-2 hidden text-ink/60 sm:block lg:hidden" duration={8}>
         <Star className="size-6" />
       </Drift>
 
-      <div className="relative z-10 mx-auto flex max-w-[54rem] flex-col items-center text-center">
+      <div className="relative z-10 mx-auto flex max-w-[62rem] flex-col items-center text-center">
         <motion.p {...rise(0)} className="eyebrow flex items-center gap-3 text-muted">
           <span className="hidden h-px w-8 bg-current opacity-50 sm:block" aria-hidden="true" />
           A re-sorting service for Rice Owls
           <span className="hidden h-px w-8 bg-current opacity-50 sm:block" aria-hidden="true" />
         </motion.p>
 
-        <motion.h1 {...rise(0.08)} className="mt-6 font-serif text-[clamp(3.1rem,11.5vw,8.6rem)] font-normal uppercase leading-[0.86] tracking-[-0.025em] text-ink">
+        <motion.h1 {...rise(0.08)} className="mt-4 font-serif text-[clamp(3rem,min(11.5vw,15svh),7.6rem)] font-normal uppercase leading-[0.86] tracking-[-0.025em] text-ink sm:mt-5">
           You were sorted <span className="whitespace-nowrap">randomly.</span>
         </motion.h1>
 
-        <motion.p {...rise(0.22)} className="relative mt-4 font-serif text-[clamp(2.4rem,7.6vw,5.4rem)] italic leading-none text-rice sm:mt-5">
+        <motion.p {...rise(0.22)} className="relative mt-3 font-serif text-[clamp(2.3rem,min(7.6vw,9.5svh),5.2rem)] italic leading-none text-rice sm:mt-4">
           We can do better.
           <Underline className="absolute -bottom-3 left-[4%] h-4 w-[92%] text-rice/70" delay={0.9} />
           <span className="hand absolute -right-2 -top-7 hidden rotate-6 text-2xl text-marker sm:block md:-right-24 md:top-0" aria-hidden="true">
@@ -92,11 +92,11 @@ function Hero() {
           </span>
         </motion.p>
 
-        <motion.p {...rise(0.34)} className="mt-9 max-w-md text-balance text-[1.05rem] leading-relaxed text-ink-2 sm:text-lg">
+        <motion.p {...rise(0.34)} className="mt-6 max-w-md text-balance text-[1.02rem] leading-relaxed text-ink-2 sm:mt-8 sm:text-lg">
           12 residential colleges. 20 questionable questions. One college you <em className="font-serif text-[1.15em] italic text-ink">actually</em> belong in.
         </motion.p>
 
-        <motion.div {...rise(0.44)} className="mt-9 flex flex-col items-center gap-4">
+        <motion.div {...rise(0.44)} className="mt-6 flex flex-col items-center gap-3 sm:mt-8 sm:gap-4">
           <Button href="#/start" size="lg" arrow>
             Get re-sorted
           </Button>
@@ -118,7 +118,7 @@ function Hero() {
       </div>
 
       {/* Sticker cluster — below xl */}
-      <div className="relative z-10 mx-auto mt-12 flex max-w-2xl flex-wrap items-center justify-center gap-x-2.5 gap-y-3 xl:hidden" aria-label="The twelve residential colleges" role="list">
+      <div className="relative z-10 mx-auto mt-7 flex max-w-2xl flex-wrap items-center justify-center gap-x-2 gap-y-2 sm:mt-12 sm:gap-x-2.5 sm:gap-y-3 xl:hidden" aria-label="The twelve residential colleges" role="list">
         {STICKERS.map((s, i) => (
           <motion.div
             key={s.id}
@@ -127,7 +127,7 @@ function Hero() {
             animate={{ opacity: 1, y: 0, rotate: s.rotate * 0.6 }}
             transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.5 + i * 0.04 }}
           >
-            <CollegeBadge college={COLLEGE_BY_ID[s.id]} variant={s.variant === 'stamp' ? 'pill' : s.variant} />
+            <CollegeBadge college={COLLEGE_BY_ID[s.id]} variant={s.variant === 'stamp' ? 'pill' : s.variant} compact />
           </motion.div>
         ))}
       </div>

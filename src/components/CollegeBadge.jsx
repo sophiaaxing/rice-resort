@@ -12,11 +12,19 @@ const VARIANTS = {
   stamp: 'size-[5.6rem] xl:size-[6.6rem] xl:text-[0.76rem] justify-center rounded-full border-2 border-dashed border-ink/50 bg-transparent text-center text-[0.68rem] font-bold uppercase leading-tight tracking-[0.12em]',
 }
 
-export default function CollegeBadge({ college, variant = 'pill', className = '', as: Tag = 'span', ...rest }) {
+// Smaller padding for the phone sticker cluster so all 12 fit on the first screen.
+const COMPACT = {
+  pill: 'max-sm:px-3.5 max-sm:py-1.5',
+  label: 'max-sm:px-3 max-sm:py-1 max-sm:text-[1.2rem]',
+  tag: 'max-sm:py-1.5',
+  stamp: '',
+}
+
+export default function CollegeBadge({ college, variant = 'pill', className = '', as: Tag = 'span', compact = false, ...rest }) {
   const vars = { '--c': college.theme.accent, '--c-on': college.theme.onAccent }
   return (
     <Tag className={`group inline-block ${className}`} style={vars} {...rest}>
-      <span className={`${BASE} ${VARIANTS[variant]}`}>
+      <span className={`${BASE} ${VARIANTS[variant]} ${compact ? COMPACT[variant] : ''}`}>
         {variant === 'tag' && <span className="size-2.5 rounded-full border border-current opacity-70" aria-hidden="true" />}
         {variant === 'label' ? college.name : college.shortName}
       </span>
