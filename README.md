@@ -44,11 +44,14 @@ Without the two variables, the site still works; it just doesn't collect anythin
 1. Each chosen answer adds its `traitEffects` to a raw 14-trait vector. Scores are always recomputed from the full answer list, so changing an earlier answer fully reverses its effect.
 2. Each trait is normalized to 0–100 as a z-score against a uniformly random respondent: 50 means average, and ±1 SD is ±16 points. This recalibrates itself automatically when you edit questions.
 3. The result is the weighted Euclidean distance to each college's `target`. Traits where a college is extreme weigh more, and `weights` can boost specific traits.
-4. **Chao** gets a distance bonus only when independence is high *and* the user either fits no established archetype well or gave unusually mixed answers. Chao is never simply the fallback for low-confidence results.
-5. When two colleges are nearly tied, the tie goes to whichever is closer on its own defining traits.
-6. Distances map to a display range: strong matches land around 85–97% and typical ones around 72–90%. Displayed percentages always strictly decrease down the ranking.
+4. **Fairness calibration:** each college's distance is compared with how far that college typically is from a mix of reference respondents. Otherwise the "balanced" Will Rice would win every middle-of-the-road answer set, and extreme colleges like Wiess would rarely come up. Tune it with `SCORING_CONFIG.fairness.strength`.
+5. **Chao** gets a distance bonus only when independence is high *and* the user either fits no established archetype well or gave unusually mixed answers. Chao is never simply the fallback for low-confidence results.
+6. When two colleges are nearly tied, the tie goes to whichever is closer on its own defining traits.
+7. Distances map to a display range: strong matches land around 85–97% and typical ones around 72–90%. Displayed percentages always strictly decrease down the ranking.
 
-After tuning anything, run `npm run simulate`. It checks that:
+After tuning anything, run `npm run simulate` and `npm run balance`. `balance` shows each college's share of results across a realistic mix of people (fair is about 8.3% each), and how likely someone somewhat like their own college is to get it.
+
+`simulate` checks that:
 - a stereotypical persona for every college sorts into that college (currently 12/12),
 - results hold up when 35% of answers are random (about 89% correct),
 - random and blended respondents spread across all 12 colleges.

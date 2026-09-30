@@ -39,14 +39,18 @@ export const SCORING_CONFIG = {
     maxBonus: 3.2,
   },
   /**
+   * Fairness calibration. Some colleges (e.g. the "balanced" Will Rice) sit
+   * close to almost everyone, while extreme ones (Wiess, Jones) are far from
+   * most people. Each college's distance is compared against how far it
+   * typically is from a reference population of mixed respondents, so no
+   * college wins just by being central. 0 = off, 1 = full.
+   */
+  fairness: { strength: 0.85, sampleSize: 1500 },
+  /**
    * Small per-college distance offsets (+ = harder to get). Calibrated with
    * `npm run simulate` so no college hogs "average" respondents.
    */
-  collegeBias: {
-    willrice: 1.5, chao: 1.0, lovett: 0.9, brown: 0.2, duncan: 0,
-    mcmurtry: -0.3, jones: -0.3, hanszen: -0.3, sidrich: -0.4, baker: -0.5,
-    martel: -1.0, wiess: -1.0,
-  },
+  collegeBias: {},
   /** Distances closer than this get re-ranked by defining traits. */
   tieEpsilon: 0.75,
   definingTraitCount: 4,
@@ -150,10 +154,81 @@ export function distanceToMatch(distance) {
  * @param {import('../types/quiz.js').TraitVector} vector
  * @returns {import('../types/quiz.js').CollegeScore[]} all colleges, best first
  */
-export function rankColleges(vector) {
+function rawDistances(vector) {
   const bias = SCORING_CONFIG.collegeBias
   const distances = Object.fromEntries(COLLEGES.map((c) => [c.id, weightedDistance(vector, c) + (bias[c.id] ?? 0)]))
   if (distances.chao != null) distances.chao = Math.max(0, distances.chao - chaoBonus(vector, distances))
+  return distances
+}
+
+/** "Stereotypical member" answers for a college: greedily picks each answer that pushes toward its target. */
+function personaAnswers(college, questions = QUESTIONS) {
+  return questions.map((q) => {
+    let best = 0
+    let bestScore = -Infinity
+    q.answers.forEach((ans, i) => {
+      const score = TRAIT_KEYS.reduce((t, k) => t + (ans.traitEffects[k] ?? 0) * (college.target[k] - 50), 0)
+      if (score > bestScore) [best, bestScore] = [i, score]
+    })
+    return best
+  })
+}
+
+let fairnessCache = null
+/**
+ * Mean/SD of each college's distance over a deterministic reference population
+ * (random answerers + blends of two college "vibes"). Computed once, lazily,
+ * from the current data files, so it re-calibrates itself when you edit them.
+ */
+function fairnessCalibration() {
+  if (fairnessCache) return fairnessCache
+  let seed = 20240
+  const rand = () => ((seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296)
+  const pick = (n) => Math.floor(rand() * n)
+  const personas = COLLEGES.map((c) => personaAnswers(c))
+  const sums = Object.fromEntries(COLLEGES.map((c) => [c.id, [0, 0]]))
+  const n = SCORING_CONFIG.fairness.sampleSize
+  for (let i = 0; i < n; i++) {
+    let answers
+    if (rand() < 0.35) answers = QUESTIONS.map((q) => pick(q.answers.length))
+    else {
+      const A = personas[pick(personas.length)]
+      const B = personas[pick(personas.length)]
+      answers = QUESTIONS.map((q, qi) => {
+        const r = rand()
+        return r < 0.5 ? A[qi] : r < 0.8 ? B[qi] : pick(q.answers.length)
+      })
+    }
+    const d = rawDistances(normalizeTraits(computeRawTraits(answers)))
+    for (const id in d) {
+      sums[id][0] += d[id]
+      sums[id][1] += d[id] ** 2
+    }
+  }
+  const stats = Object.fromEntries(Object.entries(sums).map(([id, [s1, s2]]) => [id, { mean: s1 / n, sd: Math.sqrt(Math.max(1e-6, s2 / n - (s1 / n) ** 2)) }]))
+  const all = Object.values(stats)
+  const globalMean = all.reduce((t, x) => t + x.mean, 0) / all.length
+  const globalSd = all.reduce((t, x) => t + x.sd, 0) / all.length
+  fairnessCache = { stats, globalMean, globalSd }
+  return fairnessCache
+}
+
+/** Distances re-expressed relative to each college's typical distance (see SCORING_CONFIG.fairness). */
+function fairDistances(distances) {
+  const strength = SCORING_CONFIG.fairness.strength
+  if (!strength) return distances
+  const { stats, globalMean, globalSd } = fairnessCalibration()
+  return Object.fromEntries(
+    Object.entries(distances).map(([id, d]) => {
+      const calibrated = globalMean + globalSd * ((d - stats[id].mean) / stats[id].sd)
+      return [id, (1 - strength) * d + strength * calibrated]
+    }),
+  )
+}
+
+export function rankColleges(vector) {
+  const raw = rawDistances(vector)
+  const distances = fairDistances(raw)
 
   const ranked = COLLEGES.map((c) => ({ id: c.id, distance: distances[c.id] })).sort((a, b) => a.distance - b.distance)
 
