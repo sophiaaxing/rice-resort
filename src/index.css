@@ -1,0 +1,123 @@
+@import '@fontsource/instrument-serif/latin-400.css';
+@import '@fontsource/instrument-serif/latin-400-italic.css';
+@import '@fontsource-variable/instrument-sans/index.css';
+@import '@fontsource/caveat/latin-500.css';
+@import '@fontsource-variable/jetbrains-mono/index.css';
+@import 'tailwindcss';
+
+@theme {
+  --color-cream: #f3ecdd;
+  --color-paper: #faf6ec;
+  --color-sand: #e7dcc6;
+  --color-ink: #172033;
+  --color-ink-2: #464d5e;
+  --color-muted: #5f6472;
+  --color-rice: #1d4fae;
+  --color-line: rgb(23 32 51 / 0.16);
+  --color-marker: #b8391d;
+  --color-highlight: #f2d45c;
+
+  --font-serif: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
+  --font-sans: 'Instrument Sans Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-hand: 'Caveat', 'Bradley Hand', cursive;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+
+  --ease-snap: cubic-bezier(0.2, 0.9, 0.25, 1);
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+    /* Per-college accent; pages override these inline. */
+    --accent: var(--color-rice);
+    --accent-2: var(--color-ink);
+    --on-accent: var(--color-paper);
+    --accent-ink: var(--color-rice);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-width: 300px;
+    background: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Paper grain: one static SVG noise tile, multiplied over everything. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.32;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.3 0 0 0 0 0.22 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  ::selection {
+    background: var(--color-highlight);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2.5px solid var(--accent-ink);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .wordmark {
+    font-family: var(--font-serif);
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .hand {
+    font-family: var(--font-hand);
+    font-weight: 500;
+    line-height: 1.05;
+  }
+  /* Faint ruled-paper lines for zine sections. */
+  .ruled {
+    background-image: repeating-linear-gradient(to bottom, transparent 0 31px, rgb(23 32 51 / 0.07) 31px 32px);
+  }
+  .dotted-rule {
+    background-image: radial-gradient(circle, currentColor 1px, transparent 1.2px);
+    background-size: 8px 3px;
+    background-repeat: repeat-x;
+    background-position: left center;
+  }
+}
